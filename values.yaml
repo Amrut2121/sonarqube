@@ -1,0 +1,47 @@
+deploymentType: Deployment
+replicaCount: 1
+
+community:
+  enabled: true
+  buildNumber: "25.1.0.102122"
+
+image:
+  repository: sonarqube
+  tag: 10.4.1-community
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 9000
+
+postgresql:
+  enabled: false  # Disable built-in PostgreSQL
+
+monitoringPasscode: "define_it"  
+
+jdbcOverwrite:
+  enable: true
+  jdbcUrl: "jdbc:postgresql://<your-db-name>.postgres.database.azure.com:5432/sonarqube?ssl=true&sslmode=require"
+  jdbcUsername: "<aad-app-username>@<your-db-name>"
+  jdbcPassword: ""  # Leave blank; handled via Workload Identity token
+
+sonarProperties:
+  sonar.jdbc.username: "<aad-app-username>@<your-db-name>"
+  sonar.jdbc.url: "jdbc:postgresql://<your-db-name>.postgres.database.azure.com:5432/sonarqube?ssl=true&sslmode=require"
+  sonar.web.javaAdditionalOpts: "-Djavax.net.ssl.trustStore=/path/to/truststore.jks"
+  sonar.web.context: "/"
+
+envFromSecret: azure-pg-aad-token-secret
+
+elasticsearch:
+  bootstrapChecks: false
+
+persistence:
+  enabled: true
+  storageClass: "managed-csi"
+  accessMode: ReadWriteOnce
+  size: 10Gi
+
+serviceAccount:
+  create: false
+  name: sonarqube-sa
