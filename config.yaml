@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sonarqube-custom-config
+data:
+  sonar.properties: |
+    sonar.jdbc.url=jdbc:postgresql://<your-db-name>.postgres.database.azure.com:5432/sonarqube?ssl=true&sslmode=require
+    sonar.jdbc.username=<aad-app-username>@<your-db-name>
